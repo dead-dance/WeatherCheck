@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using AutoMapper;
+using Core.Entities;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using WeatherCheckAPI.DTO;
@@ -10,37 +11,32 @@ namespace WeatherCheckAPI.Controllers
     public class DistrictController : ControllerBase
     {
         private readonly IGenericRepository<Districts> _distRepo;
+        private readonly IMapper _mapper;
 
-        public DistrictController(IGenericRepository<Districts> distRepo)
+        public DistrictController(IGenericRepository<Districts> distRepo, IMapper mapper)
         {
             _distRepo = distRepo;
+            _mapper = mapper;
         }
 
         [HttpPost("CreateDistrict")]
-        public ActionResult<DistrictDTO> SaveBcds(DistrictDTO setDto)
+        public ActionResult<DistrictDTO> SaveDistrict(DistrictDTO setDto)
         {
-            var dst = new Districts
+            try
             {
-                DivisionId = setDto.DivisionId,
-                Name = setDto.Name,
-                BnName = setDto.BnName,
-                Latitude = setDto.Latitude,
-                Longitude = setDto.Longitude,
-                SetOn = DateTimeOffset.Now
-            };
+                var dst = _mapper.Map<Districts>(setDto);
+                dst.SetOn = DateTimeOffset.Now;
 
-            _distRepo.Add(dst);
-            _distRepo.Savechange();
+                _distRepo.Add(dst);
+                _distRepo.Savechange();
 
-            return new DistrictDTO
-            {
-                Id = dst.Id,
-                DivisionId = dst.DivisionId,
-                Name = dst.Name,
-                BnName = dst.BnName,
-                Latitude = dst.Latitude,
-                Longitude = dst.Longitude
-            };
+                var result = _mapper.Map<DistrictDTO>(dst);
+                return Ok(result);
+            }
+            catch (Exception ex) {
+                //_logger.LogError(ex, "Error occurred while creating an order.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         [HttpPost("GetAllDistrict")]

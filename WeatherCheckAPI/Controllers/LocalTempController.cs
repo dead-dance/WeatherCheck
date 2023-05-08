@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using AutoMapper;
+using Core.Entities;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,37 +13,33 @@ namespace WeatherCheckAPI.Controllers
     {
 
         private readonly IGenericRepository<LocalTemperature> _localTempRepo;
+        private readonly IMapper _mapper;
 
-        public LocalTempController(IGenericRepository<LocalTemperature> localTempRepo)
+        public LocalTempController(IGenericRepository<LocalTemperature> localTempRepo, IMapper mapper)
         {
             _localTempRepo = localTempRepo;
+            _mapper = mapper;
         }
 
         [HttpPost("CreateTemperature")]
-        public ActionResult<LocalTemperatureDTO> SaveLocalTemp(LocalTemperature setDto)
+        public ActionResult<LocalTemperatureDTO> SaveLocalTemp(LocalTemperatureDTO setDto)
         {
-            var lt = new LocalTemperature
+            try
             {
-                TempDate = setDto.TempDate,
-                TempTime = setDto.TempTime,
-                DistName = setDto.DistName,
-                Latitude = setDto.Latitude,
-                Longitude = setDto.Longitude,
-                SetOn = DateTimeOffset.Now
-            };
+                var lt = _mapper.Map<LocalTemperature>(setDto);
+                lt.SetOn = DateTimeOffset.Now;
 
-            _localTempRepo.Add(lt);
-            _localTempRepo.Savechange();
+                _localTempRepo.Add(lt);
+                _localTempRepo.Savechange();
 
-            return new LocalTemperatureDTO
+                var result = _mapper.Map<LocalTemperatureDTO>(lt);
+                return Ok(result);
+            }
+            catch (Exception ex)
             {
-                Id = lt.Id,
-                TempDate = lt.TempDate,
-                TempTime = lt.TempTime,
-                DistName = lt.DistName,
-                Latitude = lt.Latitude,
-                Longitude = lt.Longitude,
-            };
+                //_logger.LogError(ex, "Error occurred while creating an order.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
     }
