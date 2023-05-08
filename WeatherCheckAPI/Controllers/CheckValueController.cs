@@ -16,7 +16,7 @@ namespace WeatherCheckAPI.Controllers
         public async Task GetFromAPI()
         {
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(@"https://api.open-meteo.com/v1/forecast?latitude=23.71&longitude=90.41&hourly=temperature_2m&timeformat=unixtime");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(@"https://api.open-meteo.com/v1/forecast?latitude=23.71&longitude=90.41&timezone=Asia/Dhaka&hourly=temperature_2m&timeformat=unixtime");
             request.UserAgent = "Developer";
             request.Accept = "true";
 
@@ -30,18 +30,19 @@ namespace WeatherCheckAPI.Controllers
                 Root? lc = JsonConvert.DeserializeObject<Root>(responseFromServer);
 
                 int i = 0;
+                int cnt = 0;
                 for (i = 0; i < lc.hourly.time.Count; i++)
                 {
                     DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(lc.hourly.time[i]));
                     double temp = lc.hourly.temperature_2m[i];
-
                     if(dateTimeOffset.DateTime.TimeOfDay.ToString() == "14:00:00")
                     {
-                        Console.WriteLine(dateTimeOffset.DateTime + "," + temp);
-                    }
-
-                    //Console.WriteLine(dateTimeOffset.DateTime + "," + temp);
+                        cnt++;
+                        //Console.WriteLine(dateTimeOffset.DateTime + "," + temp);
+                    }                  
                 }
+
+                Console.WriteLine(cnt); ;
             }
             catch (WebException ex)
             {
