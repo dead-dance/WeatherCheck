@@ -11,6 +11,12 @@ namespace WeatherCheckAPI.Controllers
     [Route("[controller]/[action]")]
     public class CheckValueController : ControllerBase
     {
+        private readonly ILogger _logger;
+
+        public CheckValueController(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         [HttpGet]
         public async Task GetFromAPI()

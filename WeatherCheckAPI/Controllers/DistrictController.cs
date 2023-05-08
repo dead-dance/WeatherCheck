@@ -11,12 +11,14 @@ namespace WeatherCheckAPI.Controllers
     public class DistrictController : ControllerBase
     {
         private readonly IGenericRepository<Districts> _distRepo;
+        private readonly ILogger _logger;
         private readonly IMapper _mapper;
 
-        public DistrictController(IGenericRepository<Districts> distRepo, IMapper mapper)
+        public DistrictController(IGenericRepository<Districts> distRepo, IMapper mapper, ILogger logger)
         {
             _distRepo = distRepo;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpPost("CreateDistrict")]
@@ -34,7 +36,7 @@ namespace WeatherCheckAPI.Controllers
                 return Ok(result);
             }
             catch (Exception ex) {
-                //_logger.LogError(ex, "Error occurred while creating an order.");
+                _logger.LogError(ex, "Error occurred while creating district.");
                 return StatusCode(500, "Internal server error.");
             }
         }

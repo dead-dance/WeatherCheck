@@ -13,12 +13,14 @@ namespace WeatherCheckAPI.Controllers
     {
 
         private readonly IGenericRepository<LocalTemperature> _localTempRepo;
+        private readonly ILogger _logger;
         private readonly IMapper _mapper;
 
-        public LocalTempController(IGenericRepository<LocalTemperature> localTempRepo, IMapper mapper)
+        public LocalTempController(IGenericRepository<LocalTemperature> localTempRepo, IMapper mapper, ILogger logger)
         {
             _localTempRepo = localTempRepo;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpPost("CreateTemperature")]
@@ -37,7 +39,7 @@ namespace WeatherCheckAPI.Controllers
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex, "Error occurred while creating an order.");
+                _logger.LogError(ex, "Error occurred while creating Temperature Record.");
                 return StatusCode(500, "Internal server error.");
             }
         }
