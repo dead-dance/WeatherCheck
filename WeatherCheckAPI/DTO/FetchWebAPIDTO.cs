@@ -21,7 +21,7 @@
         public string temperature_2m { get; set; }
     }
 
-    public class Root
+    public class FetchWebAPIDTO
     {
         public double latitude { get; set; }
         public double longitude { get; set; }

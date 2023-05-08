@@ -27,7 +27,7 @@ namespace WeatherCheckAPI.Controllers
                 System.IO.StreamReader reader = new System.IO.StreamReader(dataStream);
                 var responseFromServer = reader.ReadToEnd();
 
-                Root? lc = JsonConvert.DeserializeObject<Root>(responseFromServer);
+                FetchWebAPIDTO? lc = JsonConvert.DeserializeObject<FetchWebAPIDTO>(responseFromServer);
 
                 int i = 0;
                 int cnt = 0;

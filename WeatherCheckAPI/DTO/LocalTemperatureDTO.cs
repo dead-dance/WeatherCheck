@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Core.Entities
+namespace WeatherCheckAPI.DTO
 {
-    public class LocalTemperature : BaseEntity
+    public class LocalTemperatureDTO
     {
+        public int Id { get; set; }
         public DateTime TempDate { get; set; }
         public TimeOnly TempTime { get; set; }
         [MaxLength(60)]

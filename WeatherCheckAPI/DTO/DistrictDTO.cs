@@ -1,11 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
-namespace Core.Entities
+namespace WeatherCheckAPI.DTO
 {
-    public class Districts : BaseEntity
+    public class DistrictDTO
     {
+        public int Id { get; set; }
         public int DivisionId { get; set; }
         [MaxLength(60)]
         public string Name { get; set; }
@@ -14,6 +14,5 @@ namespace Core.Entities
         public string BnName { get; set; }
         public Int64 Latitude { get; set; }
         public Int64 Longitude { get; set; }
-
     }
 }
