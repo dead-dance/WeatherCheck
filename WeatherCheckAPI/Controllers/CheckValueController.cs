@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Core.Entities;
+using Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net;
@@ -12,17 +14,36 @@ namespace WeatherCheckAPI.Controllers
     public class CheckValueController : ControllerBase
     {
         private readonly ILogger<CheckValueController> _logger;
+        private readonly IGenericRepository<Districts> _distRepo;
 
-        public CheckValueController(ILogger<CheckValueController> logger)
+        public CheckValueController(ILogger<CheckValueController> logger, IGenericRepository<Districts> distRepo)
         {
             _logger = logger;
+            _distRepo = distRepo;
         }
 
         [HttpGet]
-        public async Task GetFromAPI()
+        public async Task GetDataForAllDistrict()
         {
+            //var distList = await _distRepo.ListAllAsync();
+
+            //GetFromAPI(distList[0].Latitude, distList[0].Longitude, distList[0].Name);
+            GetFromAPI(24.76, 90.41, "Mymensingh");
+
+            //foreach (var u in distList) {
+            //    GetFromAPI(u.Latitude, u.Longitude, u.Name);
+            //}
+        }
+
+
+        [HttpGet]
+        public void GetFromAPI(double lati, double longi, string distName)
+        {
+
+            string apiUrl = @"https://api.open-meteo.com/v1/forecast?latitude=" + lati + "&longitude=" + longi + "&timezone=Asia/Dhaka&hourly=temperature_2m&timeformat=unixtime";
+
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(@"https://api.open-meteo.com/v1/forecast?latitude=23.71&longitude=90.41&timezone=Asia/Dhaka&hourly=temperature_2m&timeformat=unixtime");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
             request.UserAgent = "Developer";
             request.Accept = "true";
 

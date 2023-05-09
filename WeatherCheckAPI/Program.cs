@@ -1,12 +1,25 @@
-var builder = WebApplication.CreateBuilder(args);
+using Core.Interfaces;
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
-// Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<StoreContext>(
+    options =>
+    {
+        options.UseSqlServer(connectionString);
+    }, ServiceLifetime.Scoped
+    );
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -17,20 +30,14 @@ var loggerFactory = app.Services.GetService<ILoggerFactory>();
 loggerFactory.AddFile(builder.Configuration["Logging:LogFilePath"].ToString());
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-app.UseSwagger();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
     app.UseSwaggerUI();
-//}
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
-
-//app.UseHttpsRedirection();
-
-//app.UseAuthorization();
-
 app.MapControllers();
 app.Run();

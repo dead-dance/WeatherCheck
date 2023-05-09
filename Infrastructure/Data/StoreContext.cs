@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Data;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
-
+using Core.Entities;
 
 namespace Infrastructure.Data
 {
@@ -14,9 +14,8 @@ namespace Infrastructure.Data
 
         }
 
-
-        //public DbSet<Donation> Donation { get; set; }
-        //public DbSet<CampaignMst> CampaignMst { get; set; }
+        public DbSet<Districts> Districts { get; set; }
+        public DbSet<LocalTemperature> LocalTemperature { get; set; }
 
         public List<T> ExecSQL<T>(string query)
         {
