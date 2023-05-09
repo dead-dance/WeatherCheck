@@ -11,10 +11,10 @@ namespace WeatherCheckAPI.Controllers
     public class DistrictController : ControllerBase
     {
         private readonly IGenericRepository<Districts> _distRepo;
-        private readonly ILogger _logger;
+        private readonly ILogger<DistrictController> _logger;
         private readonly IMapper _mapper;
 
-        public DistrictController(IGenericRepository<Districts> distRepo, IMapper mapper, ILogger logger)
+        public DistrictController(IGenericRepository<Districts> distRepo, IMapper mapper, ILogger<DistrictController> logger)
         {
             _distRepo = distRepo;
             _mapper = mapper;

@@ -11,9 +11,9 @@ namespace WeatherCheckAPI.Controllers
     [Route("[controller]/[action]")]
     public class CheckValueController : ControllerBase
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<CheckValueController> _logger;
 
-        public CheckValueController(ILogger logger)
+        public CheckValueController(ILogger<CheckValueController> logger)
         {
             _logger = logger;
         }
@@ -58,6 +58,8 @@ namespace WeatherCheckAPI.Controllers
                     var dataStream = response.GetResponseStream();
                     var reader = new StreamReader(dataStream);
                     var details = reader.ReadToEnd();
+
+                    _logger.LogError(ex, "Error fetching data from Open Meteo.");
                 }
             }
             catch (Exception tex)
@@ -65,6 +67,7 @@ namespace WeatherCheckAPI.Controllers
                 if (tex.Message != null)
                 {
                     var response = tex.Message;
+                    _logger.LogError(tex, "Generic Error, please check.");
                 }
             }
         }

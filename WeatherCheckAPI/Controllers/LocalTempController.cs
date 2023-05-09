@@ -13,10 +13,10 @@ namespace WeatherCheckAPI.Controllers
     {
 
         private readonly IGenericRepository<LocalTemperature> _localTempRepo;
-        private readonly ILogger _logger;
+        private readonly ILogger<LocalTempController> _logger;
         private readonly IMapper _mapper;
 
-        public LocalTempController(IGenericRepository<LocalTemperature> localTempRepo, IMapper mapper, ILogger logger)
+        public LocalTempController(IGenericRepository<LocalTemperature> localTempRepo, IMapper mapper, ILogger<LocalTempController> logger)
         {
             _localTempRepo = localTempRepo;
             _mapper = mapper;
