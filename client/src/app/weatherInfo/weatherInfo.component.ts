@@ -28,7 +28,6 @@ export class WeatherInfoComponent implements OnInit {
 
   getDistList(){
     this.masterService.getDistricts().subscribe(response => {
-      debugger;
       const data = response as any;
       this.distList = data.districts as IDistrict[];
     }, error => {
@@ -36,6 +35,15 @@ export class WeatherInfoComponent implements OnInit {
     });
   }
 
+
+  getCoolestDistricts(){
+    this.masterService.getCoolestDistList(this.distList).subscribe(response => {
+      const data = response as any;
+      this.distList = data.districts as IDistrict[];
+    }, error => {
+        console.log(error);
+    });
+  }
 
   createWeatherCheckForm() {
     this.weatherCheckForm = this._formBuilder.group({

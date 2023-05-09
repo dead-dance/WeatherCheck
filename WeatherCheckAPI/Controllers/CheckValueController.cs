@@ -9,9 +9,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace WeatherCheckAPI.Controllers
 {
-    [ApiController]
-    [Route("[controller]/[action]")]
-    public class CheckValueController : ControllerBase
+    public class CheckValueController : BaseApiController
     {
         private readonly ILogger<CheckValueController> _logger;
         private readonly IGenericRepository<Districts> _distRepo;
@@ -22,8 +20,9 @@ namespace WeatherCheckAPI.Controllers
             _distRepo = distRepo;
         }
 
-        [HttpGet]
-        public async Task GetDataForAllDistrict()
+        [HttpPost("GetCoolestDistrict/{districts}")]
+         public async Task GetDataForAllDistrict(List<DistrictDTO> districts)
+        //public async Task GetDataForAllDistrict(string districts)
         {
             //var distList = await _distRepo.ListAllAsync();
 

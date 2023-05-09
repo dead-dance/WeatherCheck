@@ -6,9 +6,7 @@ using WeatherCheckAPI.DTO;
 
 namespace WeatherCheckAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class DistrictController : ControllerBase
+    public class DistrictController : BaseApiController
     {
         private readonly IGenericRepository<Districts> _distRepo;
         private readonly ILogger<DistrictController> _logger;

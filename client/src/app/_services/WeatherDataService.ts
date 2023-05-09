@@ -22,9 +22,9 @@ export class WeatherDataService {
     return this.http.get('https://raw.githubusercontent.com/strativ-dev/technical-screening-test/main/bd-districts.json');
   }
 
-  // getApprovalAuthority(){    
-  //   return this.http.get(this.baseUrl + 'bgtEmployee/approvalAuthoritiesForConfig');
-  // }
+  getCoolestDistList(districts: any){    
+    return this.http.post(this.baseUrl+ 'CheckValue/GetCoolestDistrict',  districts);
+  }
   
   // getSBU(){    
   //   return this.http.get(this.baseUrl + 'employee/getSBU');

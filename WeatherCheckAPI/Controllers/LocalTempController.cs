@@ -7,9 +7,7 @@ using WeatherCheckAPI.DTO;
 
 namespace WeatherCheckAPI.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class LocalTempController : ControllerBase
+    public class LocalTempController : BaseApiController
     {
 
         private readonly IGenericRepository<LocalTemperature> _localTempRepo;

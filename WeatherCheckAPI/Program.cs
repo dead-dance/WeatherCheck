@@ -19,7 +19,15 @@ builder.Services.AddDbContext<StoreContext>(
     {
         options.UseSqlServer(connectionString);
     }, ServiceLifetime.Scoped
-    );
+);
+
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+    });
+});
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -36,6 +44,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
