@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-
-import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { IDistrict } from '../models/districts';
 
 
 
@@ -28,7 +25,7 @@ export class WeatherDataService {
   }
   
   getTravelComparison(flat: number, flong: number, tlat: number, tlong: number, travelDate: Date){    
-    return this.http.get(this.baseUrl+ 'CheckValue/GetComparedData/'+flat+'/'+flong+'/'+tlat+'/'+tlong+'/'+travelDate);
+    return this.http.get(this.baseUrl+ 'CheckValue/GetComparedData/'+flat+'/'+flong+'/'+tlat+'/'+tlong+'/'+travelDate, {responseType: 'text'});
   }
 
 }

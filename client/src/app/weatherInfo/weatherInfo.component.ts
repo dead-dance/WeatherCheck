@@ -1,11 +1,10 @@
-import { District,IDistrict } from '../models/districts';
+import { IDistrict } from '../models/districts';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { WeatherDataService } from '../_services/WeatherDataService';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { NgxSpinnerService } from "ngx-spinner"; 
 
 @Component({
   selector: 'weatherInfo',
@@ -21,7 +20,7 @@ export class WeatherInfoComponent implements OnInit {
   searchText = '';
   weatherCheckForm: FormGroup;
 
-  constructor(public masterService: WeatherDataService, private router: Router, private http: HttpClient, private _formBuilder: FormBuilder) {
+  constructor(public masterService: WeatherDataService, private router: Router, private http: HttpClient, private _formBuilder: FormBuilder, private SpinnerService: NgxSpinnerService) {
 }
 
   ngOnInit() {
@@ -30,17 +29,21 @@ export class WeatherInfoComponent implements OnInit {
   }
 
   getDistList(){
+    this.SpinnerService.show();  
     this.masterService.getDistricts().subscribe(response => {
       const data = response as any;
       this.distList = data.districts as IDistrict[];
+      this.SpinnerService.hide();  
     }, error => {
         console.log(error);
     });
   }
 
   getCoolestDistricts(){
+    this.SpinnerService.show();  
     this.masterService.getCoolestDistList().subscribe(response => {
       this.coolestDistList = response
+      this.SpinnerService.hide();  
     }, error => {
         console.log(error);
     });
@@ -72,16 +75,15 @@ export class WeatherInfoComponent implements OnInit {
 
     const f = this.distList.filter(x => x.id === this.weatherCheckForm.value.fromDistrict);
     var t = this.distList.filter(x => x.id === this.weatherCheckForm.value.toDistrict);
-
+    this.SpinnerService.show();  
     this.masterService.getTravelComparison(f[0].lat, f[0].long, t[0].lat, t[0].long, this.weatherCheckForm.value.travelDate).subscribe(response => {
       debugger;
-      this.compareMessage = response as IMessage;
+      this.SpinnerService.hide();  
+      alert(response);
       
-      alert(this.compareMessage);
     }, error => {
         console.log(error);
     });
-
   }
 
   createWeatherCheckForm() {
@@ -91,12 +93,4 @@ export class WeatherInfoComponent implements OnInit {
       travelDate: new FormControl(''),
     });
   }
-
-}
-
-
-export interface IMessage {
-  content: string;
-  contentType: string;
-  statusCode: number;
 }

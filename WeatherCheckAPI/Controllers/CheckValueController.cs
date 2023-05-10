@@ -56,7 +56,6 @@ namespace WeatherCheckAPI.Controllers
             }
         }
 
-        [HttpGet]
         private object GetFromAPI(List<DistrictDTO> dlist)
         {
             try
@@ -140,21 +139,24 @@ namespace WeatherCheckAPI.Controllers
 
 
         [HttpGet("GetComparedData/{flat}/{flong}/{tlat}/{tlong}/{travelDate}")]
-        public async Task<object> GetTemperatureDifference(double flat, double flong, double tlat, double tlong, DateTime travelDate)
+        public async Task<string> GetTemperatureDifference(double flat, double flong, double tlat, double tlong, DateTime travelDate)
         {
-            double fromTemperature = await GetIndividualData(flat, flong, travelDate);
-            double toTemperature = await GetIndividualData(tlat, tlong, travelDate);
-
-            double diff = fromTemperature - toTemperature;
-
-            string message = (diff > 1) ? "It will be a Pleasent Trip For you" : "This trip is not recommended for you";
-
-            return new ContentResult
+            try
             {
-                Content = message,
-                ContentType = "text/plain",
-                StatusCode = 201
-            };
+                double fromTemperature = await GetIndividualData(flat, flong, travelDate);
+                double toTemperature = await GetIndividualData(tlat, tlong, travelDate);
+
+                double diff = fromTemperature - toTemperature;
+
+                string message = (diff > 1) ? "It will be a Pleasent Trip For you" : "This trip is not recommended for you";
+
+                return message;
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogError(ex, "Error processing data.");
+                return ex.Message;
+            }
         }
 
         private async Task<double> GetIndividualData(double lat, double lon, DateTime date)
@@ -189,6 +191,7 @@ namespace WeatherCheckAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting API data.");
                 return 0;
             }
         }
