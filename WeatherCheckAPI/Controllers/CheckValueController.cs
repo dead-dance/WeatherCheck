@@ -157,7 +157,6 @@ namespace WeatherCheckAPI.Controllers
             };
         }
 
-
         private async Task<double> GetIndividualData(double lat, double lon, DateTime date)
         {
             try
