@@ -27,8 +27,8 @@ export class WeatherDataService {
     return this.http.get(this.baseUrl+ 'CheckValue/GetCoolestDistrict');
   }
   
-  // getSBU(){    
-  //   return this.http.get(this.baseUrl + 'employee/getSBU');
-  // }
+  getTravelComparison(flat: number, flong: number, tlat: number, tlong: number, travelDate: Date){    
+    return this.http.get(this.baseUrl+ 'CheckValue/GetComparedData/'+flat+'/'+flong+'/'+tlat+'/'+tlong+'/'+travelDate);
+  }
 
 }

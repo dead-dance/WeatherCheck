@@ -14,8 +14,10 @@ import { Observable } from 'rxjs';
 export class WeatherInfoComponent implements OnInit {
 
   @ViewChild('search', {static: false}) searchTerm: ElementRef;
+  frmDist: IDistrict;
   distList: any[];
   coolestDistList: any;
+  compareMessage: any;
   searchText = '';
   weatherCheckForm: FormGroup;
 
@@ -36,14 +38,49 @@ export class WeatherInfoComponent implements OnInit {
     });
   }
 
-
   getCoolestDistricts(){
     this.masterService.getCoolestDistList().subscribe(response => {
-      debugger;
       this.coolestDistList = response
     }, error => {
         console.log(error);
     });
+  }
+
+  getTravelComparison()
+  {
+    if(this.weatherCheckForm.value.fromDistrict === "" || this.weatherCheckForm.value.fromDistrict === undefined)
+    {
+      alert("Select travel from location");
+      return;
+    }
+    if(this.weatherCheckForm.value.toDistrict === "" || this.weatherCheckForm.value.toDistrict === undefined)
+    {
+      alert("Select Destination");
+      return;
+    }
+    if(this.weatherCheckForm.value.fromDistrict === this.weatherCheckForm.value.toDistrict)
+    {
+      alert("Travel Location has to be different");
+      return;
+    }
+
+    if(this.weatherCheckForm.value.travelDate === "" || this.weatherCheckForm.value.travelDate === null || this.weatherCheckForm.value.travelDate === undefined)
+    {
+      alert("Select Travel Date");
+      return;
+    }
+
+    const f = this.distList.filter(x => x.id === this.weatherCheckForm.value.fromDistrict);
+    var t = this.distList.filter(x => x.id === this.weatherCheckForm.value.toDistrict);
+
+    this.masterService.getTravelComparison(f[0].lat, f[0].long, t[0].lat, t[0].long, this.weatherCheckForm.value.travelDate).subscribe(response => {
+      debugger;
+      this.compareMessage = response;
+      alert(this.compareMessage);
+    }, error => {
+        console.log(error);
+    });
+
   }
 
   createWeatherCheckForm() {
@@ -54,40 +91,4 @@ export class WeatherInfoComponent implements OnInit {
     });
   }
 
-  // onSubmit(form: NgForm) {
-  //   debugger;
-  //   if (this.masterService.bcdsFormData.id == 0)
-  //     this.insertBcds(form);
-  //   else
-  //     this.updateBcds(form);
-  // }
-
-
-
-  resetSearch(){
-    this.searchText = '';
-}
-
-
-  // resetForm(form: NgForm) {
-  //   form.form.reset();
-  //   this.masterService.bcdsFormData = new BcdsInfo();
-  // }
-  // resetForm(form: NgForm) {
-  //   this.searchText = '';
-  //   form.reset();
-  //   this.config = {
-  //     currentPage: 1,
-  //     itemsPerPage: 10,
-  //     totalItems:50,
-  //     };
-  // }
-  // resetPage() {
-  //   this.masterService.bcdsFormData=new BcdsInfo();
-  //   this.config = {
-  //     currentPage: 1,
-  //     itemsPerPage: 10,
-  //     totalItems:50,
-  //     };
-  // }
 }

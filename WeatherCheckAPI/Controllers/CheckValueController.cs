@@ -24,7 +24,6 @@ namespace WeatherCheckAPI.Controllers
 
         [HttpGet("GetCoolestDistrict")]
         public async Task<object> GetDataForAllDistrict()
-        //public async Task GetDataForAllDistrict(string districts)
         {
 
             string apiUrl = @"https://raw.githubusercontent.com/strativ-dev/technical-screening-test/main/bd-districts.json";
@@ -138,10 +137,74 @@ namespace WeatherCheckAPI.Controllers
         }
 
 
-        [HttpGet("GetComparedData")]
-        public async Task<object> GetTemperatureDifference()
+        [HttpGet("GetComparedData/{flat}/{flong}/{tlat}/{tlong}/{travelDate}")]
+        public object GetTemperatureDifference(double flat, double flong, double tlat, double tlong, DateTime travelDate)
         {
-            
+            double fromTemperature = GetIndividualData(flat, flong, travelDate);
+            double toTemperature = GetIndividualData(tlat, tlong, travelDate);
+
+            double diff = fromTemperature - toTemperature;
+
+            if (diff > 1)
+            {
+                //return "It will be a Pleasent Trip For you";
+
+                return new ContentResult
+                {
+                   Content = "It will be a Pleasent Trip For you",
+                   ContentType = "text/plain",
+                   StatusCode = 201
+                };
+            }
+            else
+            {
+                //return "This trip is not recommended for you";
+
+                return new ContentResult
+                {
+                   Content = "This trip is not recommended for you",
+                   ContentType = "text/plain",
+                   StatusCode = 201
+                };
+            }
+        }
+
+        private double GetIndividualData(double lat, double lon, DateTime date)
+        {
+            try
+            {
+                double Temperature = 0;
+                string apiFromUrl = @"https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&hourly=temperature_2m&forecast_days=1&start_date=" + date.ToString("yyyy-MM-dd") + "&end_date=" + date.ToString("yyyy-MM-dd") + "";
+
+                System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiFromUrl);
+                request.UserAgent = "Developer";
+                request.Accept = "true";
+                System.Net.HttpWebResponse response = (System.Net.HttpWebResponse)request.GetResponse();
+                System.IO.Stream dataStream = response.GetResponseStream();
+                System.IO.StreamReader reader = new System.IO.StreamReader(dataStream);
+                var responseFromServer = reader.ReadToEnd();
+
+                FetchWebAPIDTO? Loc = JsonConvert.DeserializeObject<FetchWebAPIDTO>(responseFromServer);
+
+                int i = 0;
+                for (i = 0; i < Loc.hourly.time.Count; i++)
+                {
+                    //DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Loc.hourly.time[i]);
+
+                    if (Loc.hourly.time[i].ToString().Substring(11) == "14:00")
+                    {
+                        Temperature = Loc.hourly.temperature_2m[i];
+                    }
+                }
+
+                return Temperature;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+
+            }
         }
     }
-}
+    }
