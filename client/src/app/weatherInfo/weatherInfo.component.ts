@@ -75,7 +75,8 @@ export class WeatherInfoComponent implements OnInit {
 
     this.masterService.getTravelComparison(f[0].lat, f[0].long, t[0].lat, t[0].long, this.weatherCheckForm.value.travelDate).subscribe(response => {
       debugger;
-      this.compareMessage = response;
+      this.compareMessage = response as IMessage;
+      
       alert(this.compareMessage);
     }, error => {
         console.log(error);
@@ -91,4 +92,11 @@ export class WeatherInfoComponent implements OnInit {
     });
   }
 
+}
+
+
+export interface IMessage {
+  content: string;
+  contentType: string;
+  statusCode: number;
 }
