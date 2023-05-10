@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -11,6 +12,7 @@ namespace WeatherCheckAPI.Controllers
 {
     public class CheckValueController : BaseApiController
     {
+        private List<LocalTemperatureDTO> tempList = new List<LocalTemperatureDTO>();
         private readonly ILogger<CheckValueController> _logger;
         private readonly IGenericRepository<Districts> _distRepo;
 
@@ -20,26 +22,12 @@ namespace WeatherCheckAPI.Controllers
             _distRepo = distRepo;
         }
 
-        [HttpPost("GetCoolestDistrict/{districts}")]
-         public async Task GetDataForAllDistrict(List<DistrictDTO> districts)
+        [HttpGet("GetCoolestDistrict")]
+        public async Task<object> GetDataForAllDistrict()
         //public async Task GetDataForAllDistrict(string districts)
         {
-            //var distList = await _distRepo.ListAllAsync();
 
-            //GetFromAPI(distList[0].Latitude, distList[0].Longitude, distList[0].Name);
-            GetFromAPI(24.76, 90.41, "Mymensingh");
-
-            //foreach (var u in distList) {
-            //    GetFromAPI(u.Latitude, u.Longitude, u.Name);
-            //}
-        }
-
-
-        [HttpGet]
-        public void GetFromAPI(double lati, double longi, string distName)
-        {
-
-            string apiUrl = @"https://api.open-meteo.com/v1/forecast?latitude=" + lati + "&longitude=" + longi + "&timezone=Asia/Dhaka&hourly=temperature_2m&timeformat=unixtime";
+            string apiUrl = @"https://raw.githubusercontent.com/strativ-dev/technical-screening-test/main/bd-districts.json";
 
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
@@ -48,27 +36,80 @@ namespace WeatherCheckAPI.Controllers
 
             try
             {
-                System.Net.HttpWebResponse response = (System.Net.HttpWebResponse)request.GetResponse();
-                System.IO.Stream dataStream = response.GetResponseStream();
-                System.IO.StreamReader reader = new System.IO.StreamReader(dataStream);
-                var responseFromServer = reader.ReadToEnd();
+                string json = (new WebClient()).DownloadString(apiUrl);
 
-                FetchWebAPIDTO? lc = JsonConvert.DeserializeObject<FetchWebAPIDTO>(responseFromServer);
+                var distListJson = JsonConvert.DeserializeObject<DistRoot>(json);
+                var distList = distListJson.Districts;
 
-                int i = 0;
-                int cnt = 0;
-                for (i = 0; i < lc.hourly.time.Count; i++)
+                var returnResult = GetFromAPI(distList);
+
+                return returnResult;
+            }
+            catch (Exception tex)
+            {
+                if (tex.Message != null)
                 {
-                    DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(lc.hourly.time[i]));
-                    double temp = lc.hourly.temperature_2m[i];
-                    if(dateTimeOffset.DateTime.TimeOfDay.ToString() == "14:00:00")
-                    {
-                        cnt++;
-                        //Console.WriteLine(dateTimeOffset.DateTime + "," + temp);
-                    }                  
+                    var response = tex.Message;
+                    _logger.LogError(tex, "Generic Error getting district data.");
                 }
 
-                Console.WriteLine(cnt); ;
+                return tex;
+            }
+        }
+
+        [HttpGet]
+        public object GetFromAPI(List<DistrictDTO> dlist)
+        {
+            try
+            {
+                foreach (var u in dlist)
+                {
+                    string apiUrl = @"https://api.open-meteo.com/v1/forecast?latitude=" + u.Lat + "&longitude=" + u.Long + "&timezone=Asia/Dhaka&hourly=temperature_2m&timeformat=unixtime";
+
+                    System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(apiUrl);
+                    request.UserAgent = "Developer";
+                    request.Accept = "true";
+                    System.Net.HttpWebResponse response = (System.Net.HttpWebResponse)request.GetResponse();
+                    System.IO.Stream dataStream = response.GetResponseStream();
+                    System.IO.StreamReader reader = new System.IO.StreamReader(dataStream);
+                    var responseFromServer = reader.ReadToEnd();
+
+                    FetchWebAPIDTO? lc = JsonConvert.DeserializeObject<FetchWebAPIDTO>(responseFromServer);
+
+                    int i = 0;
+                    for (i = 0; i < lc.hourly.time.Count; i++)
+                    {
+                        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(lc.hourly.time[i]));
+                        double temp = lc.hourly.temperature_2m[i];
+                        if (dateTimeOffset.DateTime.TimeOfDay.ToString() == "14:00:00")
+                        {
+                            TimeSpan time = TimeSpan.Parse(dateTimeOffset.DateTime.TimeOfDay.ToString());
+                            tempList.Add(new LocalTemperatureDTO
+                            {
+                                TempDate = dateTimeOffset.DateTime,
+                                TempTime = time,
+                                Latitude = lc.latitude,
+                                Longitude = lc.longitude,
+                                DistName = u.Name,
+                                Temperature = temp,
+                            });
+                        }
+                    }
+                }
+
+                var result = (from m in tempList
+                              where m.TempDate >= DateTime.Today && m.TempDate <= DateTime.Today.AddDays(6)
+                              group m by m.DistName into g
+                              orderby g.Average(i => i.Temperature) ascending
+                              select new
+                              {
+                                  DistName = g.Key,
+                                  AvgTemp = g.Average(i => i.Temperature)
+                              }).Take(10);
+
+
+                return result;
             }
             catch (WebException ex)
             {
@@ -80,6 +121,7 @@ namespace WeatherCheckAPI.Controllers
                     var details = reader.ReadToEnd();
 
                     _logger.LogError(ex, "Error fetching data from Open Meteo.");
+                    return ex;
                 }
             }
             catch (Exception tex)
@@ -88,8 +130,18 @@ namespace WeatherCheckAPI.Controllers
                 {
                     var response = tex.Message;
                     _logger.LogError(tex, "Generic Error, please check.");
+                    return tex;
                 }
             }
+
+            return "";
+        }
+
+
+        [HttpGet("GetComparedData")]
+        public async Task<object> GetTemperatureDifference()
+        {
+            
         }
     }
 }

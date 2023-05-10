@@ -8,7 +8,8 @@ namespace Core.Entities
         public TimeOnly TempTime { get; set; }
         [MaxLength(60)]
         public string DistName { get; set; }
-        public Int64 Latitude { get; set; }
-        public Int64 Longitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public double Temperature { get; set; }
     }
 }

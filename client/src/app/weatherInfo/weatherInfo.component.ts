@@ -15,6 +15,7 @@ export class WeatherInfoComponent implements OnInit {
 
   @ViewChild('search', {static: false}) searchTerm: ElementRef;
   distList: any[];
+  coolestDistList: any;
   searchText = '';
   weatherCheckForm: FormGroup;
 
@@ -37,9 +38,9 @@ export class WeatherInfoComponent implements OnInit {
 
 
   getCoolestDistricts(){
-    this.masterService.getCoolestDistList(this.distList).subscribe(response => {
-      const data = response as any;
-      this.distList = data.districts as IDistrict[];
+    this.masterService.getCoolestDistList().subscribe(response => {
+      debugger;
+      this.coolestDistList = response
     }, error => {
         console.log(error);
     });
@@ -47,7 +48,6 @@ export class WeatherInfoComponent implements OnInit {
 
   createWeatherCheckForm() {
     this.weatherCheckForm = this._formBuilder.group({
-      districtLoad: new FormControl(''),
       fromDistrict: new FormControl(''),
       toDistrict: new FormControl(''),
       travelDate: new FormControl(''),

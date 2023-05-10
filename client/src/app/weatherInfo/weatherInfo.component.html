@@ -23,72 +23,66 @@
 
                             <div class="form-group">
                                 <div class="row">
-                                    <div class="col-md-3">
-                                        <label>District</label>
-                                        <span style="color:red;">*</span>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <select class="form-control" id="districtLoad" formControlName ="districtLoad">
-                                            <option *ngFor="let a of distList" [value]="a.id">{{a.name}}</option>
-                                        </select>
-                                    </div>
-                                     <div class="col-sm-3">
-                                    <button class="btn btn-success   btn-block" style="text-shadow: 3em #000;" (click)="getCoolestDistricts()"><i class="fa fa-save"></i>&nbsp; Save</button>
-                                </div>
-                                </div>
-                            </div>
-                            <!-- <div class="form-group">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <label>No of Member</label>
-                                        <span style="color:red;">*</span>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <input class="form-control" placeholder="Number of Member" name="noOfMember" #noOfMember="ngModel" [(ngModel)]="masterService.bcdsFormData.noOfMember" required [class.invalid]="noOfMember.invalid && noOfMember.touched" [pattern]="numberPattern">
-                                        <div class="invalid-feedback" *ngIf="noOfMember.errors?.pattern">Only numeric value</div>
+                                    <div class="col-sm-12">
+                                        <button class="btn btn-success   btn-block" style="text-shadow: 3em #000;" (click)="getCoolestDistricts()"><i class="fa fa-save"></i>&nbsp; Get Coolest Districts Data</button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <label>BCDS Address</label>
-                                        <span style="color:red;">*</span>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <textarea class="form-control" maxlength="500" placeholder="Address" name="bcdsAddress" #bcdsAddress="ngModel" [(ngModel)]="masterService.bcdsFormData.bcdsAddress" required [class.invalid]="bcdsAddress.invalid && bcdsAddress.touched"></textarea>
-                                    </div>
-                                </div>
-                            </div> -->
-
+                            <br>
                             <div class="form-group">
                                 <table class="table  table-bordered">
-                                    <!-- <thead style="background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #28b9da), color-stop(1, #f9fafc));">
+                                    <thead style="background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #28b9da), color-stop(1, #f9fafc));">
                                         <tr class="HeaderRow">
-                                            <td>BCDS Name</td>
-                                            <td>Address</td>
-                                            <td>No of Member</td>
-                                            <td></td>
+                                            <td>District Name</td>
+                                            <td>Avg Temperature</td>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let bcds of bcdsInfo | paginate: config | filter: searchText ">
+                                        <tr *ngFor="let d of coolestDistList">
                                             <td>
-                                                {{bcds.bcdsName}}
+                                                {{d.distName}}
                                             </td>
                                             <td>
-                                                {{bcds.bcdsAddress}}
-                                            </td>
-                                            <td>
-                                                {{bcds.noOfMember}}
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-info  btn-block" type="button" (click)="populateForm(bcds)"><i class="fa fa-pen"></i>&nbsp; Edit</button>
+                                                {{d.avgTemp | number}}
                                             </td>
                                         </tr>
-                                    </tbody> -->
+                                    </tbody>
                                 </table>
                             </div>
+                            <br>
+                            <br>
+                            <div class="form-group">
+                                <div class="row">
+
+                                    <div class="col-md-1">
+                                        <label>From District</label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-control" id="fromDistrict" formControlName="fromDistrict">
+                                            <option *ngFor="let a of distList" [value]="a.id">{{a.name}}</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-1">
+                                        <label>To District</label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-control" id="toDistrict" formControlName="toDistrict">
+                                            <option *ngFor="let a of distList" [value]="a.id">{{a.name}}</option>
+                                        </select>
+                                    </div>
+
+
+                                    <div class="col-md-1">
+                                        <label>Travel Date</label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input class="form-control" type="date" id="travelDate" formControlName="travelDate">
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
                         <!-- /.card -->
                     </div>

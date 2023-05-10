@@ -6,14 +6,14 @@ namespace Core.Entities
 {
     public class Districts : BaseEntity
     {
-        public int DivisionId { get; set; }
+        public int Division_id { get; set; }
         [MaxLength(60)]
         public string Name { get; set; }
         [MaxLength(100)]
         [Column(TypeName = "nvarchar(100)")]
-        public string BnName { get; set; }
-        public Int64 Latitude { get; set; }
-        public Int64 Longitude { get; set; }
+        public string Bn_name { get; set; }
+        public double Lat { get; set; }
+        public double Long { get; set; }
 
     }
 }
