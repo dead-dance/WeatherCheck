@@ -6,7 +6,6 @@ Core, I am keeping it for future extensions and scopes.
 Project Overview:
 This project is developed on ASP.Net Core Web API. On front-end Angular is used. There it can be accessed via Swagger or via Web UI
 
-
 How to Run:
 1. Download the code or clone repository.
 2. Open "WeatherCheck-master" folder using Visual Studio Code.
@@ -18,4 +17,4 @@ How to Run:
 8. After compiling Angular it will open in http://localhost:4200/
 9. To access web UI click "http://localhost:4200/weather"
 
-Please be noted: node_modules needs to be placed inside "...\WeatherCheck-master\client" Folder.
+Please be noted: node_modules needs to be placed inside "...\WeatherCheck-master\client" Folder. Due excessive size, it can not be added to source control.
