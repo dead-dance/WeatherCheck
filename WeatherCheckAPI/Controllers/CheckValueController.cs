@@ -13,14 +13,11 @@ namespace WeatherCheckAPI.Controllers
 {
     public class CheckValueController : BaseApiController
     {
-        private List<LocalTemperatureDTO> tempList = new List<LocalTemperatureDTO>();
         private readonly ILogger<CheckValueController> _logger;
-        private readonly IGenericRepository<Districts> _distRepo;
 
-        public CheckValueController(ILogger<CheckValueController> logger, IGenericRepository<Districts> distRepo)
+        public CheckValueController(ILogger<CheckValueController> logger)
         {
             _logger = logger;
-            _distRepo = distRepo;
         }
 
         [HttpGet("GetCoolestDistrict")]
